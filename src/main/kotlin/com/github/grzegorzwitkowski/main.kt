@@ -13,5 +13,7 @@ fun main(args: Array<String>) {
     vertx.deployVerticle(MsgReceiverVerticle("R1"))
     vertx.deployVerticle(MsgReceiverVerticle("R2"))
     vertx.deployVerticle(MsgSenderVerticle("S1"))
-}
 
+    vertx.deployVerticle(HttpServerVerticle())
+    vertx.deployVerticle(HttpClientVerticle())
+}
