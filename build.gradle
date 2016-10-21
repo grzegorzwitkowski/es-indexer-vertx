@@ -1,4 +1,19 @@
-apply plugin: "java"
+buildscript {
+
+    ext.ver = [
+            kotlin: "1.0.4"
+    ]
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${ver.kotlin}"
+    }
+}
+
+apply plugin: "kotlin"
 
 group "com.github.grzegorzwitkowski"
 
@@ -11,5 +26,9 @@ repositories {
 }
 
 dependencies {
+
+    compile "org.jetbrains.kotlin:kotlin-stdlib:${ver.kotlin}"
     compile "io.vertx:vertx-core:3.3.3"
+    compile "org.slf4j:slf4j-log4j12:1.7.21"
+    compile "log4j:log4j:1.2.17"
 }
