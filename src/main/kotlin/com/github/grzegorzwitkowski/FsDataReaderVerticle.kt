@@ -1,10 +1,10 @@
 package com.github.grzegorzwitkowski
 
 import io.vertx.core.AbstractVerticle
-import io.vertx.core.file.OpenOptions
 import io.vertx.core.json.Json
-import io.vertx.core.parsetools.RecordParser
 import org.slf4j.LoggerFactory
+import java.nio.file.Files
+import java.nio.file.Paths
 
 class FsDataReaderVerticle : AbstractVerticle() {
 
@@ -14,24 +14,15 @@ class FsDataReaderVerticle : AbstractVerticle() {
 
     override fun start() {
 
-        vertx.fileSystem().readFile("users.csv", { result ->
-            if (result.succeeded()) {
-                val buffer = result.result()
-                val lineParser = RecordParser.newDelimited("\n", { line ->
-                    log.info("parsed line: $line")
-                    val user = User.fromCsv(line.getString(0, line.length()))
-                    vertx.eventBus().send("docs-to-index", Json.encode(user))
-                })
-                lineParser.handle(buffer)
+        vertx.executeBlocking<Void>({ futureResult ->
+            Files.lines(Paths.get("users.csv")).forEach { csvLine ->
+                val user = User.fromCsv(csvLine)
+                val json = Json.encode(user)
+                vertx.eventBus().send("docs-to-index", json)
             }
-        })
-
-        vertx.fileSystem().open("users.csv", OpenOptions(), { result ->
-            if (result.succeeded()) {
-                val file = result.result()
-
-
-        }
+            futureResult.complete()
+        }, { futureResult ->
+            log.info("finished reading users.csv file")
         })
     }
 }
