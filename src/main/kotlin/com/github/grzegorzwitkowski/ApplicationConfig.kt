@@ -2,6 +2,8 @@ package com.github.grzegorzwitkowski
 
 import io.vertx.core.AbstractVerticle
 import io.vertx.core.Vertx
+import io.vertx.core.eventbus.EventBus
+import io.vertx.core.http.HttpClient
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -31,5 +33,15 @@ open class ApplicationConfig {
     @Bean
     open fun vertx(): Vertx {
         return Vertx.vertx()
+    }
+
+    @Bean
+    open fun httpClient(vertx: Vertx): HttpClient {
+        return vertx.createHttpClient()
+    }
+
+    @Bean
+    open fun eventBus(vertx: Vertx): EventBus {
+        return vertx.eventBus()
     }
 }

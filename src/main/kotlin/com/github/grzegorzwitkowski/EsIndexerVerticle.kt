@@ -1,21 +1,21 @@
 package com.github.grzegorzwitkowski
 
 import io.vertx.core.AbstractVerticle
+import io.vertx.core.eventbus.EventBus
+import io.vertx.core.http.HttpClient
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 
 @Component
-class EsIndexerVerticle : AbstractVerticle() {
+class EsIndexerVerticle(private val eventBus: EventBus, private val httpClient: HttpClient) : AbstractVerticle() {
 
     companion object {
         private val log = LoggerFactory.getLogger(EsIndexerVerticle::class.java)
     }
 
-    private val httpClient by lazy { vertx.createHttpClient() }
-
     override fun start() {
 
-        vertx.eventBus().consumer<String>("docs-to-index", { message ->
+        eventBus.consumer<String>("docs-to-index", { message ->
             val userAsJson = message.body()
             log.info("indexing document: $userAsJson")
 

@@ -4,6 +4,5 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 
 fun main(args: Array<String>) {
 
-    val springCtx = AnnotationConfigApplicationContext("com.github.grzegorzwitkowski")
-    springCtx.start()
+    AnnotationConfigApplicationContext("com.github.grzegorzwitkowski")
 }
