@@ -1,11 +1,14 @@
 package com.github.grzegorzwitkowski
 
 import io.vertx.core.AbstractVerticle
+import io.vertx.core.Future
 import io.vertx.core.json.Json
 import org.slf4j.LoggerFactory
+import org.springframework.stereotype.Component
 import java.nio.file.Files
 import java.nio.file.Paths
 
+@Component
 class FsDataReaderVerticle : AbstractVerticle() {
 
     companion object {
@@ -14,15 +17,19 @@ class FsDataReaderVerticle : AbstractVerticle() {
 
     override fun start() {
 
-        vertx.executeBlocking<Void>({ futureResult ->
-            Files.lines(Paths.get("users.csv")).forEach { csvLine ->
-                val user = User.fromCsv(csvLine)
-                val json = Json.encode(user)
-                vertx.eventBus().send("docs-to-index", json)
-            }
-            futureResult.complete()
-        }, { futureResult ->
-            log.info("finished reading users.csv file")
-        })
+        vertx.executeBlocking<Void>({ readFileAndSendLinesToIndexer(it) }, { logInCaseOfFailure() })
+    }
+
+    private fun readFileAndSendLinesToIndexer(futureResult: Future<Void>) {
+
+        Files.lines(Paths.get("users.csv")).forEach { csvLine ->
+            val userAsJson = Json.encode(User.fromCsv(csvLine))
+            vertx.eventBus().send("docs-to-index", userAsJson)
+        }
+        futureResult.complete()
+    }
+
+    private fun logInCaseOfFailure() {
+        log.info("finished reading users.csv file")
     }
 }

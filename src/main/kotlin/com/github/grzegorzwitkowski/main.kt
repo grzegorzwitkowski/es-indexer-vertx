@@ -1,22 +1,9 @@
 package com.github.grzegorzwitkowski
 
-import io.vertx.core.Vertx
+import org.springframework.context.annotation.AnnotationConfigApplicationContext
 
 fun main(args: Array<String>) {
 
-    System.setProperty("vertx.logger-delegate-factory-class-name", "io.vertx.core.logging.SLF4JLogDelegateFactory")
-
-    val vertx = Vertx.vertx()
-
-//    vertx.deployVerticle(MyVerticle())
-//
-//    vertx.deployVerticle(MsgReceiverVerticle("R1"))
-//    vertx.deployVerticle(MsgReceiverVerticle("R2"))
-//    vertx.deployVerticle(MsgSenderVerticle("S1"))
-//
-//    vertx.deployVerticle(HttpServerVerticle())
-//    vertx.deployVerticle(HttpClientVerticle())
-
-    vertx.deployVerticle(FsDataReaderVerticle())
-    vertx.deployVerticle(EsIndexerVerticle())
+    val springCtx = AnnotationConfigApplicationContext("com.github.grzegorzwitkowski")
+    springCtx.start()
 }
